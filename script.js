@@ -189,6 +189,18 @@ const PNR_MOCK = {
 // ── Helpers ──────────────────────────────────────────────────
 
 /**
+ * Escape a string for safe insertion into HTML to prevent XSS.
+ */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
+/**
  * Normalise a station string for loose matching.
  * e.g. "New Delhi (NDLS)" → "new delhi"
  */
@@ -275,7 +287,7 @@ document.getElementById("searchForm").addEventListener("submit", function (e) {
     if (results.length === 0) {
       container.innerHTML = `
         <div class="error-msg">
-          No trains found between <strong>${from}</strong> and <strong>${to}</strong> for the selected class.
+          No trains found between <strong>${escapeHtml(from)}</strong> and <strong>${escapeHtml(to)}</strong> for the selected class.
           Try different stations or choose "All Classes".
         </div>`;
       return;
@@ -320,7 +332,7 @@ document.getElementById("pnrForm").addEventListener("submit", function (e) {
   setTimeout(() => {
     const info = PNR_MOCK[pnr];
     if (!info) {
-      container.innerHTML = `<div class="error-msg">PNR <strong>${pnr}</strong> not found. Try <strong>4123456789</strong> or <strong>5987654321</strong> for a demo.</div>`;
+      container.innerHTML = `<div class="error-msg">PNR <strong>${escapeHtml(pnr)}</strong> not found. Try <strong>4123456789</strong> or <strong>5987654321</strong> for a demo.</div>`;
       return;
     }
 
@@ -345,8 +357,8 @@ document.getElementById("pnrForm").addEventListener("submit", function (e) {
     container.innerHTML = `
       <div class="pnr-result-box">
         <div class="pnr-header">
-          <h3>PNR: ${pnr}</h3>
-          <span class="pnr-status-badge ${statusCls}">${overallStatus}</span>
+          <h3>PNR: ${escapeHtml(pnr)}</h3>
+          <span class="pnr-status-badge ${statusCls}">${escapeHtml(overallStatus)}</span>
         </div>
         <div class="pnr-body">
           <div class="pnr-info-grid">
